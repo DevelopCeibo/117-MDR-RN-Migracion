@@ -1,7 +1,7 @@
 
 const fs = require("fs");
 const { stringify } = require("csv-stringify");
-const filename = "MIGRA_Respuesta_v200.csv";
+const filename = "MIGRA_Respuesta_v01.csv";
 const writableStream = fs.createWriteStream(filename);
 
 const axios = require('axios');
@@ -32,15 +32,15 @@ const stringifier = stringify({ header: true, columns: columns });
 
 let data = [];
   axios.post('https://qbe.custhelp.com/services/rest/connect/v1.3/analyticsReportResults', {
-    id: 101728,
+    id: 101740,
     "filters": [
       {
         "name": "id1",
-        "values": "3334000" //4316800
+        "values": "6106466" //6106466
       },
       {
         "name": "id2",
-        "values": "3330000" //4310500
+        "values": "6096469" //6096469
       }
     ]
   })
