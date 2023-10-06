@@ -1,7 +1,7 @@
 
 const fs = require("fs");
 const { stringify } = require("csv-stringify");
-const filename = "MIGRA_Archivo.csv";
+const filename = "MIGRA_Archivo_v01.csv";
 const writableStream = fs.createWriteStream(filename);
 
 
@@ -44,7 +44,17 @@ const stringifier = stringify({ header: true, columns: columns });
 
 let data = [];
   axios.post('https://qbe.custhelp.com/services/rest/connect/v1.3/analyticsReportResults', {
-    id: 101739
+    id: 101743,
+    "filters": [
+      {
+        "name": "id1",
+        "values": "16144" //6106466
+      },
+      {
+        "name": "id2",
+        "values": "527" //6096469
+      }
+    ]
   })
   .then(function (response) {
      const r = response.data.rows.map((row) => {
