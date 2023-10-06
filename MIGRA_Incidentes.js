@@ -1,18 +1,11 @@
 
 const fs = require("fs");
 const { stringify } = require("csv-stringify");
-const filename = "MIGRA_Incidentes.csv";
+const filename = "MIGRA_Incidente_v429.csv";
 const writableStream = fs.createWriteStream(filename);
-
-
-
-
 const axios = require('axios');
 
-
-
 postRN()
-
 
 function postRN (){
 
