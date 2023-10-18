@@ -1,32 +1,47 @@
 const fs = require('fs')
 const { stringify } = require('csv-stringify')
-
 const axios = require('axios')
-
-//postRN(6106466, 6106266, 1)
 
 async function postRN(end, start, loop = 1) {
   const filename =
     loop < 10
-      ? `./assets/respuestas/MIGRA_Respuesta_v0${loop}.csv`
-      : `./assets/respuestas/MIGRA_Respuesta_v${loop}.csv`
+      ? `./assets/incidentes/MIGRA_Incidente_v0${loop}.csv`
+      : `./assets/incidentes/MIGRA_Incidente_v${loop}.csv`
   const writableStream = fs.createWriteStream(filename)
+
   axios.defaults.headers.common['Authorization'] =
     'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
-    'Nro_Incidente',
-    'Clave_ajena',
-    'Cuenta',
-    'Fecha_de_creacion',
+    'Nro_de_referencia',
+    'Actualizado_por',
+    'Asunto',
+    'Buzon_de_correo',
+    'Cola',
+    'Creado_por_cuenta',
+    'Modo_de_Contacto',
+    'Usuario_Intra',
+    'Tipo_de_Incidente',
+    'Tipo_de_estado',
+    'Tipo_Cobro',
+    'Siniestro',
+    'Poliza',
+    'Nro_Cuenta',
+    'ID_de_producto',
+    'ID_de_incidente',
+    'ID_de_disposicion',
     'ID_de_contacto',
-    'ID_de_cuenta_de_canal',
-    'ID_de_hilo_del_incidente',
-    'Secuencia',
-    'Texto',
-    'Tipo_de_entrada_de_hilo',
-    'Peso'
+    'ID_de_categoria',
+    'Grupo',
+    'Fecha_Efecto',
+    'Fecha_de_ultima_respuesta',
+    'Fecha_de_ultima_actualizacion',
+    'Fecha_de_creacion',
+    'Fecha_de_cierre',
+    'Estado',
+    'Cuenta_asignada',
+    'ID_de_organizacion'
   ]
 
   const stringifier = stringify({
@@ -40,7 +55,7 @@ async function postRN(end, start, loop = 1) {
     .post(
       'https://qbe.custhelp.com/services/rest/connect/v1.3/analyticsReportResults',
       {
-        id: 101740,
+        id: 101727,
         filters: [
           {
             name: 'id1',
@@ -79,8 +94,8 @@ async function postRN(end, start, loop = 1) {
   return totalRegistros
 }
 
-async function getRespuestas() {
-  const ultimoRegistro = 6106466 // 250
+async function getIncidentes() {
+  const ultimoRegistro = 4306135 // 250
   const primerRegistro = 0 // 100
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
@@ -106,4 +121,4 @@ async function getRespuestas() {
   console.log(`Se han guardado un total de ${totalRegistros} registros.`)
 }
 
-getRespuestas()
+getIncidentes()

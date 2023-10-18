@@ -3,30 +3,52 @@ const { stringify } = require('csv-stringify')
 
 const axios = require('axios')
 
-//postRN(6106466, 6106266, 1)
-
 async function postRN(end, start, loop = 1) {
   const filename =
     loop < 10
-      ? `./assets/respuestas/MIGRA_Respuesta_v0${loop}.csv`
-      : `./assets/respuestas/MIGRA_Respuesta_v${loop}.csv`
+      ? `./assets/siniestros/MIGRA_Siniestro_v0${loop}.csv`
+      : `./assets/siniestros/MIGRA_Siniestro_v${loop}.csv`
   const writableStream = fs.createWriteStream(filename)
+
   axios.defaults.headers.common['Authorization'] =
     'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
-    'Nro_Incidente',
-    'Clave_ajena',
-    'Cuenta',
+    'Apellido_Conductor',
+    'Apellido_y_Nombre',
+    'Calle',
+    'Causa',
+    'Codigo_de_Productor',
+    'Codigo_Postal',
+    'Codigo_Producto',
+    'Comiseria',
+    'Contacto',
+    'Danios_Propios',
+    'Danios_Terceros',
+    'Documento_Conductor',
+    'Estado',
     'Fecha_de_creacion',
-    'ID_de_contacto',
-    'ID_de_cuenta_de_canal',
-    'ID_de_hilo_del_incidente',
-    'Secuencia',
-    'Texto',
-    'Tipo_de_entrada_de_hilo',
-    'Peso'
+    'Fecha_de_siniestro',
+    'Fecha_de_ultima_actualizacion',
+    'Fecha_siniestro',
+    'Hora',
+    'ID',
+    'Lesiones_Terceros',
+    'Localidad',
+    'Nombre_Conductor',
+    'Numero',
+    'Numero_de_Documento',
+    'Numero_de_Siniestro',
+    'Numero_de_Siniestro_Nuevo',
+    'Oficina',
+    'Pais',
+    'Poliza',
+    'Producto',
+    'Productor',
+    'Provincia',
+    'Responsable',
+    'Tomador_Riesgo'
   ]
 
   const stringifier = stringify({
@@ -40,15 +62,15 @@ async function postRN(end, start, loop = 1) {
     .post(
       'https://qbe.custhelp.com/services/rest/connect/v1.3/analyticsReportResults',
       {
-        id: 101740,
+        id: 101737,
         filters: [
           {
             name: 'id1',
-            values: JSON.stringify(end) //6106466
+            values: JSON.stringify(end) //474547
           },
           {
             name: 'id2',
-            values: JSON.stringify(start) //6096469
+            values: JSON.stringify(start) //473547
           }
         ]
       }
@@ -79,8 +101,8 @@ async function postRN(end, start, loop = 1) {
   return totalRegistros
 }
 
-async function getRespuestas() {
-  const ultimoRegistro = 6106466 // 250
+async function getSiniestros() {
+  const ultimoRegistro = 474685 // 250
   const primerRegistro = 0 // 100
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
@@ -106,4 +128,4 @@ async function getRespuestas() {
   console.log(`Se han guardado un total de ${totalRegistros} registros.`)
 }
 
-getRespuestas()
+getSiniestros()

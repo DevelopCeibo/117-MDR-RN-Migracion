@@ -1,32 +1,59 @@
 const fs = require('fs')
 const { stringify } = require('csv-stringify')
-
 const axios = require('axios')
 
-//postRN(6106466, 6106266, 1)
-
-async function postRN(end, start, loop = 1) {
-  const filename =
-    loop < 10
-      ? `./assets/respuestas/MIGRA_Respuesta_v0${loop}.csv`
-      : `./assets/respuestas/MIGRA_Respuesta_v${loop}.csv`
+async function getContactos() {
+  const filename = `./assets/contactos/MIGRA_Contacto_v01.csv`
   const writableStream = fs.createWriteStream(filename)
+
   axios.defaults.headers.common['Authorization'] =
     'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
-    'Nro_Incidente',
-    'Clave_ajena',
-    'Cuenta',
+    'Acepta_Envio_Informacion',
+    'Apellido',
+    'Calle',
+    'Codigo_Postal',
+    'Conexion',
+    'Conflictivo',
+    'Correo_electronico_no_valido',
+    'Correo_E_alternativo_1',
+    'Correo_E_alternativo_2',
+    'Departamento',
+    'Direccion_de_correo_electronico',
+    'DNI',
+    'Fecha_Alta',
     'Fecha_de_creacion',
+    'Fecha_de_ultima_actualizacion',
+    'Fecha_Rechazo_Op',
     'ID_de_contacto',
-    'ID_de_cuenta_de_canal',
-    'ID_de_hilo_del_incidente',
-    'Secuencia',
-    'Texto',
-    'Tipo_de_entrada_de_hilo',
-    'Peso'
+    'ID_de_usuario',
+    'ID_en_AIS',
+    'Id_en_BI',
+    'Localidad',
+    'Marca_ADS',
+    'No_Molestar',
+    'Nombre',
+    'Nombre_completo',
+    'Numero_de_domicilio',
+    'Pais',
+    'Piso',
+    'Poliza_Vida',
+    'Poliza_Vida_2',
+    'Poliza_Vida_3',
+    'Poliza_Vida_4',
+    'Provincia',
+    'Telefono_de_la_oficina_sin_formato',
+    'Telefono_de_oficina',
+    'Telefono_del_asistente',
+    'Telefono_del_asistente_sin_formato',
+    'Telefono_movil',
+    'Telefono_movil_sin_formato',
+    'Telefono_particular',
+    'Telefono_particular_sin_formato',
+    'Tipo_Documento',
+    'Vendedor '
   ]
 
   const stringifier = stringify({
@@ -40,17 +67,7 @@ async function postRN(end, start, loop = 1) {
     .post(
       'https://qbe.custhelp.com/services/rest/connect/v1.3/analyticsReportResults',
       {
-        id: 101740,
-        filters: [
-          {
-            name: 'id1',
-            values: JSON.stringify(end) //6106466
-          },
-          {
-            name: 'id2',
-            values: JSON.stringify(start) //6096469
-          }
-        ]
+        id: 101730
       }
     )
     .then(function (response) {
@@ -75,35 +92,8 @@ async function postRN(end, start, loop = 1) {
 
   stringifier.pipe(writableStream)
   console.log(`Los datos fueron guardados en archivo: ${filename} `)
-
-  return totalRegistros
-}
-
-async function getRespuestas() {
-  const ultimoRegistro = 6106466 // 250
-  const primerRegistro = 0 // 100
-  const cantidadPorArchivo = 9000
-  let totalRegistros = 0
-
-  let loop = 1
-
-  for (
-    let index = ultimoRegistro;
-    index > primerRegistro;
-    index -= cantidadPorArchivo
-  ) {
-    const indexHasta = index
-    const indexDesde =
-      index - cantidadPorArchivo > primerRegistro
-        ? index - cantidadPorArchivo
-        : primerRegistro
-    const cantidadRegistros = await postRN(indexHasta, indexDesde, loop)
-    loop++
-    totalRegistros += cantidadRegistros
-  }
-
-  console.log(`Se han guardado ${loop - 1} archivos.`)
   console.log(`Se han guardado un total de ${totalRegistros} registros.`)
+  return null
 }
 
-getRespuestas()
+getContactos()

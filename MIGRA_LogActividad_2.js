@@ -1,32 +1,31 @@
 const fs = require('fs')
 const { stringify } = require('csv-stringify')
-
 const axios = require('axios')
 
-//postRN(6106466, 6106266, 1)
+//postRN()
 
 async function postRN(end, start, loop = 1) {
   const filename =
     loop < 10
-      ? `./assets/respuestas/MIGRA_Respuesta_v0${loop}.csv`
-      : `./assets/respuestas/MIGRA_Respuesta_v${loop}.csv`
+      ? `./assets/logActividad/MIGRA_LogActividad_v0${loop}.csv`
+      : `./assets/logActividad/MIGRA_LogActividad_v${loop}.csv`
   const writableStream = fs.createWriteStream(filename)
+
   axios.defaults.headers.common['Authorization'] =
     'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
-    'Nro_Incidente',
-    'Clave_ajena',
-    'Cuenta',
-    'Fecha_de_creacion',
     'ID_de_contacto',
-    'ID_de_cuenta_de_canal',
-    'ID_de_hilo_del_incidente',
-    'Secuencia',
-    'Texto',
-    'Tipo_de_entrada_de_hilo',
-    'Peso'
+    'ID_de_incidente',
+    'Fecha',
+    'Sector',
+    'Asesor',
+    'Accion_realizada',
+    'Descripcion',
+    'ID_de_tipo_de_transaccion',
+    'Inicial',
+    'Direccion_IP_del_cliente'
   ]
 
   const stringifier = stringify({
@@ -40,7 +39,7 @@ async function postRN(end, start, loop = 1) {
     .post(
       'https://qbe.custhelp.com/services/rest/connect/v1.3/analyticsReportResults',
       {
-        id: 101740,
+        id: 101742,
         filters: [
           {
             name: 'id1',
@@ -79,10 +78,10 @@ async function postRN(end, start, loop = 1) {
   return totalRegistros
 }
 
-async function getRespuestas() {
-  const ultimoRegistro = 6106466 // 250
-  const primerRegistro = 0 // 100
-  const cantidadPorArchivo = 9000
+async function getLogActividad() {
+  const ultimoRegistro = 4316800 // 4316800
+  const primerRegistro = 399 // 399
+  const cantidadPorArchivo = 500
   let totalRegistros = 0
 
   let loop = 1
@@ -106,4 +105,4 @@ async function getRespuestas() {
   console.log(`Se han guardado un total de ${totalRegistros} registros.`)
 }
 
-getRespuestas()
+getLogActividad()

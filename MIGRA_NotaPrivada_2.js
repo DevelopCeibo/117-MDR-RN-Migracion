@@ -1,32 +1,29 @@
 const fs = require('fs')
 const { stringify } = require('csv-stringify')
-
 const axios = require('axios')
-
-//postRN(6106466, 6106266, 1)
 
 async function postRN(end, start, loop = 1) {
   const filename =
     loop < 10
-      ? `./assets/respuestas/MIGRA_Respuesta_v0${loop}.csv`
-      : `./assets/respuestas/MIGRA_Respuesta_v${loop}.csv`
+      ? `./assets/notaPrivadas/MIGRA_NotaPrivada_v0${loop}.csv`
+      : `./assets/notaPrivadas/MIGRA_NotaPrivada_v${loop}.csv`
   const writableStream = fs.createWriteStream(filename)
+
   axios.defaults.headers.common['Authorization'] =
     'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
-    'Nro_Incidente',
-    'Clave_ajena',
-    'Cuenta',
-    'Fecha_de_creacion',
-    'ID_de_contacto',
-    'ID_de_cuenta_de_canal',
+    'Nro_de_referencia',
+    'ID_de_incidente',
     'ID_de_hilo_del_incidente',
-    'Secuencia',
-    'Texto',
-    'Tipo_de_entrada_de_hilo',
-    'Peso'
+    'Fecha_de_creacion',
+    'Fecha_de_cierre',
+    'Modo_de_Contacto',
+    'Jerarquia_de_categoria',
+    'ID_de_categoria',
+    'Estado',
+    'Texto'
   ]
 
   const stringifier = stringify({
@@ -40,7 +37,7 @@ async function postRN(end, start, loop = 1) {
     .post(
       'https://qbe.custhelp.com/services/rest/connect/v1.3/analyticsReportResults',
       {
-        id: 101740,
+        id: 101741,
         filters: [
           {
             name: 'id1',
@@ -79,13 +76,13 @@ async function postRN(end, start, loop = 1) {
   return totalRegistros
 }
 
-async function getRespuestas() {
-  const ultimoRegistro = 6106466 // 250
-  const primerRegistro = 0 // 100
+async function getNotasPrivadas() {
+  const ultimoRegistro = 1030466 // 6106466
+  const primerRegistro = 1021466 // 0
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
 
-  let loop = 1
+  let loop = 565
 
   for (
     let index = ultimoRegistro;
@@ -106,4 +103,4 @@ async function getRespuestas() {
   console.log(`Se han guardado un total de ${totalRegistros} registros.`)
 }
 
-getRespuestas()
+getNotasPrivadas()
