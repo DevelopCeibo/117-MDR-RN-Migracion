@@ -3,7 +3,7 @@ const { stringify } = require('csv-stringify')
 const axios = require('axios')
 
 async function getOrganizaciones() {
-  const filename = './assets/organizaciones/MIGRA_Organizacion_v01.csv'
+  const filename = './assets/organizacion/MIGRA_Organizacion_v01.csv'
   const writableStream = fs.createWriteStream(filename)
   axios.defaults.headers.common['Authorization'] =
     'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='

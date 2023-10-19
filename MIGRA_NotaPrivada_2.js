@@ -5,8 +5,8 @@ const axios = require('axios')
 async function postRN(end, start, loop = 1) {
   const filename =
     loop < 10
-      ? `./assets/notaPrivadas/MIGRA_NotaPrivada_v0${loop}.csv`
-      : `./assets/notaPrivadas/MIGRA_NotaPrivada_v${loop}.csv`
+      ? `./assets/notaPrivada/MIGRA_NotaPrivada_v0${loop}.csv`
+      : `./assets/notaPrivada/MIGRA_NotaPrivada_v${loop}.csv`
   const writableStream = fs.createWriteStream(filename)
 
   axios.defaults.headers.common['Authorization'] =

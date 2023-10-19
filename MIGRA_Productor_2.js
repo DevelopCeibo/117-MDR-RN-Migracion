@@ -3,7 +3,7 @@ const { stringify } = require('csv-stringify')
 const axios = require('axios')
 
 async function getProductores() {
-  const filename = './assets/productores/MIGRA_Productor_v01.csv'
+  const filename = './assets/productor/MIGRA_Productor_v01.csv'
   const writableStream = fs.createWriteStream(filename)
   axios.defaults.headers.common['Authorization'] =
     'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='

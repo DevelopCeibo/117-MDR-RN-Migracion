@@ -3,7 +3,7 @@ const { stringify } = require('csv-stringify')
 const axios = require('axios')
 
 async function getTipoIncidentes() {
-  const filename = './assets/tipoIncidentes/MIGRA_TipoIncidente_v01.csv'
+  const filename = './assets/tipoIncidente/MIGRA_TipoIncidente_v01.csv'
   const writableStream = fs.createWriteStream(filename)
 
   axios.defaults.headers.common['Authorization'] =

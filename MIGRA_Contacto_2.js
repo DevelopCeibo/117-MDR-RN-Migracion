@@ -3,7 +3,7 @@ const { stringify } = require('csv-stringify')
 const axios = require('axios')
 
 async function getContactos() {
-  const filename = `./assets/contactos/MIGRA_Contacto_v01.csv`
+  const filename = `./assets/contacto/MIGRA_Contacto_v01.csv`
   const writableStream = fs.createWriteStream(filename)
 
   axios.defaults.headers.common['Authorization'] =
@@ -53,7 +53,7 @@ async function getContactos() {
     'Telefono_particular',
     'Telefono_particular_sin_formato',
     'Tipo_Documento',
-    'Vendedor '
+    'Vendedor'
   ]
 
   const stringifier = stringify({
