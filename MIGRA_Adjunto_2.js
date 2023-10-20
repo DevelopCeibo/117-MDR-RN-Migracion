@@ -9,16 +9,25 @@ const {
 const { join, basename } = require('path')
 const { parse } = require('csv-parse/sync')
 const axios = require('axios')
+const dotenv = require('dotenv')
+const Client = require('ssh2-sftp-client')
 
-const incidenteId = 4314463 // Reemplaza con el valor adecuado
-const adjuntoId = 1034317 // Reemplaza con el valor adecuado
-const fileName = 'RE_ LISTADO DE POLIZAS ZURICH __ PASE DE CODIGO.zip' // Reemplaza con el valor adecuado
+dotenv.config()
+
+const sftp = new Client()
+
+const config = {
+  host: process.env.SFTP_HOST,
+  port: process.env.SFTP_PORT,
+  username: process.env.SFTP_USERNAME,
+  password: process.env.SFTP_PASSWORD
+}
 
 const getAFile = async (incidenteId, adjuntoId) => {
   const config = {
     responseType: 'arraybuffer',
     headers: {
-      Authorization: 'Basic dXN1YXJpby53czpRYmUxMzU3OQ==',
+      Authorization: process.env.ORACLE_PASSWORD,
       'Content-Type': 'application/document'
     }
   }
@@ -78,22 +87,15 @@ function getAllCSV(dirPath) {
   )
 }
 
-function prueba() {
-  const allCSV = getAllCSV('./assets/archivo').filter(
-    (file) =>
-      basename(file).startsWith('MIGRA_') && basename(file).endsWith('.csv')
-  )
-  console.log('csv ==>>', allCSV)
-}
+async function tamanioTotal() {
+  let tamanio = 0
 
-async function main() {
-  const allCSVFile = getAllCSV('./assets/archivo').filter(
+  const allCSVFile = await getAllCSV('./assets/archivo').filter(
     (file) =>
       basename(file).startsWith('MIGRA_') && basename(file).endsWith('.csv')
   )
 
-  for (let i = 0; i < 1; i++) {
-    const fileToRead = allCSVFile[i]
+  await allCSVFile.forEach(async (fileToRead) => {
     console.log('Leyendo el archivo: ', fileToRead)
 
     let fileContent = readFileSync(fileToRead, 'utf-8')
@@ -108,27 +110,83 @@ async function main() {
       skip_records_with_empty_values: true
     })
 
-    //console.log('cvsContent ==>>', cvsContent)
+    await cvsContent.forEach((cvsRegister) => {
+      tamanio += Number(cvsRegister.Tamanio)
+    })
+  })
 
-    for (let j = 0; j < 5; j++) {
-      try {
-        const file = await getAFile(
-          cvsContent[j].Clave_ajena,
-          cvsContent[j].ID_de_archivo_anexo
-        )
+  return console.log('El tamaño total es: ', tamanio)
+}
 
-        if (file) {
-          await writeAFile(
-            file,
-            cvsContent[j].Nombre_de_archivo_de_usuario,
-            cvsContent[j].Clave_ajena
+async function sendAFile(file, fileName, incidenteId) {
+  const remotePath = `sftp/assets/adjuntos/${incidenteId}`
+  try {
+    const existe = await sftp.exists(remotePath)
+    if (!existe) {
+      await sftp.mkdir(remotePath, true)
+    }
+  } catch (err) {
+    console.error('Error al intentar crear el directorio', err)
+  }
+
+  const filePath = join(remotePath, fileName)
+
+  try {
+    await sftp.put(file, filePath)
+    console.log(`El archivo se ha enviado exitosamente a ${filePath}`)
+  } catch (err) {
+    console.error('Error al enviar el archivo:', err)
+  }
+}
+
+async function main() {
+  try {
+    await sftp.connect(config)
+
+    const allCSVFile = getAllCSV('./assets/archivo').filter(
+      (file) =>
+        basename(file).startsWith('MIGRA_') && basename(file).endsWith('.csv')
+    )
+
+    for (let i = 0; i < allCSVFile.length; i++) {
+      const fileToRead = allCSVFile[i]
+      console.log('Leyendo el archivo: ', fileToRead)
+
+      let fileContent = readFileSync(fileToRead, 'utf-8')
+
+      if (fileContent.charCodeAt(0) === 0xfeff) {
+        fileContent = fileContent.substring(1)
+      }
+
+      const cvsContent = await parse(fileContent, {
+        delimiter: ['|'],
+        columns: true,
+        skip_records_with_empty_values: true
+      })
+
+      for (let j = 0; j < cvsContent.length; j++) {
+        try {
+          const file = await getAFile(
+            cvsContent[j].Clave_ajena,
+            cvsContent[j].ID_de_archivo_anexo
           )
+
+          if (file) {
+            await sendAFile(
+              file,
+              cvsContent[j].Nombre_de_archivo_de_usuario,
+              cvsContent[j].Clave_ajena
+            )
+          }
+        } catch (error) {
+          console.error('Error:', error)
         }
-      } catch (error) {
-        console.error('Error:', error)
       }
     }
+    await sftp.end()
+  } catch (error) {
+    console.error('Error:', error)
   }
 }
 main()
-//prueba()
+//tamanioTotal()
