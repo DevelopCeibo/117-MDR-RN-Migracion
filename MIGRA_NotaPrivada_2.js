@@ -77,12 +77,13 @@ async function postRN(end, start, loop = 1) {
 }
 
 async function getNotasPrivadas() {
-  const ultimoRegistro = 1030466 // 6106466
-  const primerRegistro = 1021466 // 0
+  const ultimoRegistro = 6172330 // 6106466
+  const primerRegistro = 6106466 // 0
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
 
-  let loop = 565
+  let archivoIndex = 680
+  let loop = 1
 
   for (
     let index = ultimoRegistro;
@@ -94,7 +95,11 @@ async function getNotasPrivadas() {
       index - cantidadPorArchivo > primerRegistro
         ? index - cantidadPorArchivo
         : primerRegistro
-    const cantidadRegistros = await postRN(indexHasta, indexDesde, loop)
+    const cantidadRegistros = await postRN(
+      indexHasta,
+      indexDesde,
+      archivoIndex + loop
+    )
     loop++
     totalRegistros += cantidadRegistros
   }

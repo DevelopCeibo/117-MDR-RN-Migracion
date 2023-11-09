@@ -102,11 +102,12 @@ async function postRN(end, start, loop = 1) {
 }
 
 async function getSiniestros() {
-  const ultimoRegistro = 474685 // 250
-  const primerRegistro = 0 // 100
+  const ultimoRegistro = 477892 // 250
+  const primerRegistro = 474685 // 100
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
 
+  let archivoIndex = 150
   let loop = 1
 
   for (
@@ -119,7 +120,11 @@ async function getSiniestros() {
       index - cantidadPorArchivo > primerRegistro
         ? index - cantidadPorArchivo
         : primerRegistro
-    const cantidadRegistros = await postRN(indexHasta, indexDesde, loop)
+    const cantidadRegistros = await postRN(
+      indexHasta,
+      indexDesde,
+      archivoIndex + loop
+    )
     loop++
     totalRegistros += cantidadRegistros
   }

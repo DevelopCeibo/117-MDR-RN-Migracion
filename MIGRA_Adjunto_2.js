@@ -14,14 +14,14 @@ const Client = require('ssh2-sftp-client')
 
 dotenv.config()
 
-const sftp = new Client()
+//const sftp = new Client()
 
-const config = {
+/* const config = {
   host: process.env.SFTP_HOST,
   port: process.env.SFTP_PORT,
   username: process.env.SFTP_USERNAME,
   password: process.env.SFTP_PASSWORD
-}
+} */
 
 const getAFile = async (incidenteId, adjuntoId) => {
   const config = {
@@ -55,7 +55,7 @@ const writeAFile = async (file, fileName, incidenteId) => {
 
     // Asegurarse de que el directorio exista, si no, créalo
     if (!existsSync(incidenteDir)) {
-      mkdirSync(incidenteDir)
+      mkdirSync(incidenteDir, { recursive: true })
     }
 
     // Ruta completa del archivo, incluyendo el directorio del incidente
@@ -141,7 +141,7 @@ async function sendAFile(file, fileName, incidenteId) {
 
 async function main() {
   try {
-    await sftp.connect(config)
+    //await sftp.connect(config)
 
     const allCSVFile = getAllCSV('./assets/archivo').filter(
       (file) =>
@@ -183,7 +183,7 @@ async function main() {
         }
       }
     }
-    await sftp.end()
+    //await sftp.end()
   } catch (error) {
     console.error('Error:', error)
   }

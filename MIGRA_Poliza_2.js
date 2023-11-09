@@ -2,14 +2,20 @@ const fs = require('fs')
 const { stringify } = require('csv-stringify')
 const axios = require('axios')
 
-async function getPolizas() {
-  const filename = './assets/poliza/MIGRA_Poliza_v01.csv'
+async function postRN(end, start, loop = 1) {
+  const filename =
+    loop < 10
+      ? `./assets/poliza/MIGRA_Poliza_v0${loop}.csv`
+      : `./assets/poliza/MIGRA_Poliza_v${loop}.csv`
+
   const writableStream = fs.createWriteStream(filename)
+
   axios.defaults.headers.common['Authorization'] =
     'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
+    'ID',
     'Acreedor_Prendario_Hipotecario',
     'Actualizado_por',
     'Bolso_Compra',
@@ -28,7 +34,6 @@ async function getPolizas() {
     'Fecha_Siniestro',
     'Grupo_de_afinidad',
     'Grupo_Organizador',
-    'ID',
     'Numero_de_cuenta',
     'Numero_de_Cuenta_Enmascarado',
     'Organizador',
@@ -55,7 +60,17 @@ async function getPolizas() {
     .post(
       'https://qbe.custhelp.com/services/rest/connect/v1.3/analyticsReportResults',
       {
-        id: 101734
+        id: 101734,
+        filters: [
+          {
+            name: 'id1',
+            values: JSON.stringify(end) //1337840
+          },
+          {
+            name: 'id2',
+            values: JSON.stringify(start) //1337840
+          }
+        ]
       }
     )
     .then(function (response) {
@@ -80,8 +95,40 @@ async function getPolizas() {
 
   stringifier.pipe(writableStream)
   console.log(`Los datos fueron guardados en archivo: ${filename} `)
+
+  return totalRegistros
+}
+
+async function getPolizas() {
+  const ultimoRegistro = 1340557 // 1338807
+  const primerRegistro = 1338807 // 0
+  const cantidadPorArchivo = 9000
+  let totalRegistros = 0
+
+  let archivoIndex = 150
+  let loop = 1
+
+  for (
+    let index = ultimoRegistro;
+    index > primerRegistro;
+    index -= cantidadPorArchivo
+  ) {
+    const indexHasta = index
+    const indexDesde =
+      index - cantidadPorArchivo > primerRegistro
+        ? index - cantidadPorArchivo
+        : primerRegistro
+    const cantidadRegistros = await postRN(
+      indexHasta,
+      indexDesde,
+      archivoIndex + loop
+    )
+    loop++
+    totalRegistros += cantidadRegistros
+  }
+
+  console.log(`Se han guardado ${loop - 1} archivos.`)
   console.log(`Se han guardado un total de ${totalRegistros} registros.`)
-  return null
 }
 
 getPolizas()

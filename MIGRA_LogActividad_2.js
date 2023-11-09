@@ -79,11 +79,12 @@ async function postRN(end, start, loop = 1) {
 }
 
 async function getLogActividad() {
-  const ultimoRegistro = 4316800 // 4316800
-  const primerRegistro = 399 // 399
+  const ultimoRegistro = 4354386 // 4316800
+  const primerRegistro = 4316800 // 399
   const cantidadPorArchivo = 500
   let totalRegistros = 0
 
+  let archivoIndex = 4317
   let loop = 1
 
   for (
@@ -96,7 +97,11 @@ async function getLogActividad() {
       index - cantidadPorArchivo > primerRegistro
         ? index - cantidadPorArchivo
         : primerRegistro
-    const cantidadRegistros = await postRN(indexHasta, indexDesde, loop)
+    const cantidadRegistros = await postRN(
+      indexHasta,
+      indexDesde,
+      archivoIndex + loop
+    )
     loop++
     totalRegistros += cantidadRegistros
   }

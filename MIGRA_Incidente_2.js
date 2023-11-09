@@ -95,12 +95,12 @@ async function postRN(end, start, loop = 1) {
 }
 
 async function getIncidentes() {
-  const ultimoRegistro = 4306135 // 250
-  const primerRegistro = 0 // 100
+  const ultimoRegistro = 4354386 // 250
+  const primerRegistro = 4306135 // 100
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
 
-  let loop = 1
+  let loop = 480
 
   for (
     let index = ultimoRegistro;

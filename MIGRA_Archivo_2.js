@@ -85,12 +85,12 @@ async function postRN(end, start, loop = 1) {
 }
 
 async function getarchivos() {
-  const ultimoRegistro = 1042255 // 250
-  const primerRegistro = 0 // 100
+  const ultimoRegistro = 1047915 // 1047915
+  const primerRegistro = 1042255 // 1042255
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
 
-  let loop = 1
+  let loop = 117
 
   for (
     let index = ultimoRegistro;
