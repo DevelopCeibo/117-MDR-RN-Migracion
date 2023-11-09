@@ -172,7 +172,7 @@ async function main() {
           )
 
           if (file) {
-            await sendAFile(
+            await writeAFile(
               file,
               cvsContent[j].Nombre_de_archivo_de_usuario,
               cvsContent[j].Clave_ajena
