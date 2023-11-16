@@ -1,6 +1,9 @@
 const fs = require('fs')
-const { stringify } = require('csv-stringify')
 const axios = require('axios')
+const { stringify } = require('csv-stringify')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 async function postRN(end, start, loop = 1) {
   const filename =
@@ -9,8 +12,7 @@ async function postRN(end, start, loop = 1) {
       : `./assets/incidente/MIGRA_Incidente_v${loop}.csv`
   const writableStream = fs.createWriteStream(filename)
 
-  axios.defaults.headers.common['Authorization'] =
-    'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
+  axios.defaults.headers.common['Authorization'] = process.env.ORACLE_PASSWORD
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
@@ -95,12 +97,19 @@ async function postRN(end, start, loop = 1) {
 }
 
 async function getIncidentes() {
-  const ultimoRegistro = 4354386 // 250
-  const primerRegistro = 4306135 // 100
+  const ultimoRegistro = 4354386 // 4354386
+  const primerRegistro = 0 // 0
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
 
-  let loop = 480
+  let loop = 1
+
+  const directorio = `./assets/incidente`
+
+  // Asegurarse de que el directorio exista, si no, créalo
+  if (!fs.existsSync(directorio)) {
+    fs.mkdirSync(directorio, { recursive: true })
+  }
 
   for (
     let index = ultimoRegistro;

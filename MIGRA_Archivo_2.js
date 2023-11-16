@@ -1,17 +1,19 @@
 const fs = require('fs')
-const { stringify } = require('csv-stringify')
 const axios = require('axios')
+const { stringify } = require('csv-stringify')
+const dotenv = require('dotenv')
 
-//postRN()
+dotenv.config()
 
 async function postRN(end, start, loop = 1) {
   const filename =
     loop < 10
       ? `./assets/archivo/MIGRA_Archivo_v0${loop}.csv`
       : `./assets/archivo/MIGRA_Archivo_v${loop}.csv`
+
   const writableStream = fs.createWriteStream(filename)
-  axios.defaults.headers.common['Authorization'] =
-    'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
+
+  axios.defaults.headers.common['Authorization'] = process.env.ORACLE_PASSWORD
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
@@ -84,13 +86,20 @@ async function postRN(end, start, loop = 1) {
   return totalRegistros
 }
 
-async function getarchivos() {
+async function getArchivos() {
   const ultimoRegistro = 1047915 // 1047915
-  const primerRegistro = 1042255 // 1042255
+  const primerRegistro = 0 // 0
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
 
-  let loop = 117
+  let loop = 1
+
+  const directorio = `./assets/archivo`
+
+  // Asegurarse de que el directorio exista, si no, créalo
+  if (!fs.existsSync(directorio)) {
+    fs.mkdirSync(directorio, { recursive: true })
+  }
 
   for (
     let index = ultimoRegistro;
@@ -111,4 +120,4 @@ async function getarchivos() {
   console.log(`Se han guardado un total de ${totalRegistros} registros.`)
 }
 
-getarchivos()
+getArchivos()

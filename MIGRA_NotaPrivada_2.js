@@ -1,6 +1,9 @@
 const fs = require('fs')
-const { stringify } = require('csv-stringify')
 const axios = require('axios')
+const { stringify } = require('csv-stringify')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 async function postRN(end, start, loop = 1) {
   const filename =
@@ -9,8 +12,7 @@ async function postRN(end, start, loop = 1) {
       : `./assets/notaPrivada/MIGRA_NotaPrivada_v${loop}.csv`
   const writableStream = fs.createWriteStream(filename)
 
-  axios.defaults.headers.common['Authorization'] =
-    'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
+  axios.defaults.headers.common['Authorization'] = process.env.ORACLE_PASSWORD
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
@@ -77,13 +79,20 @@ async function postRN(end, start, loop = 1) {
 }
 
 async function getNotasPrivadas() {
-  const ultimoRegistro = 6172330 // 6106466
-  const primerRegistro = 6106466 // 0
+  const ultimoRegistro = 6172330 // 6172330
+  const primerRegistro = 0 // 0
   const cantidadPorArchivo = 9000
   let totalRegistros = 0
 
-  let archivoIndex = 680
+  let archivoIndex = 0
   let loop = 1
+
+  const directorio = `./assets/notaPrivada`
+
+  // Asegurarse de que el directorio exista, si no, créalo
+  if (!fs.existsSync(directorio)) {
+    fs.mkdirSync(directorio, { recursive: true })
+  }
 
   for (
     let index = ultimoRegistro;

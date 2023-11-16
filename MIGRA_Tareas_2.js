@@ -1,12 +1,22 @@
 const fs = require('fs')
-const { stringify } = require('csv-stringify')
 const axios = require('axios')
+const { stringify } = require('csv-stringify')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 async function getTareas() {
+  const directorio = `./assets/tarea`
+
+  // Asegurarse de que el directorio exista, si no, créalo
+  if (!fs.existsSync(directorio)) {
+    fs.mkdirSync(directorio, { recursive: true })
+  }
+
   const filename = './assets/tarea/MIGRA_Tarea_v01.csv'
   const writableStream = fs.createWriteStream(filename)
-  axios.defaults.headers.common['Authorization'] =
-    'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
+
+  axios.defaults.headers.common['Authorization'] = process.env.ORACLE_PASSWORD
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
