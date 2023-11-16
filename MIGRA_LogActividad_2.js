@@ -1,18 +1,19 @@
 const fs = require('fs')
-const { stringify } = require('csv-stringify')
 const axios = require('axios')
+const { stringify } = require('csv-stringify')
+const dotenv = require('dotenv')
 
-//postRN()
+dotenv.config()
 
 async function postRN(end, start, loop = 1) {
   const filename =
     loop < 10
       ? `./assets/logActividad/MIGRA_LogActividad_v0${loop}.csv`
       : `./assets/logActividad/MIGRA_LogActividad_v${loop}.csv`
+
   const writableStream = fs.createWriteStream(filename)
 
-  axios.defaults.headers.common['Authorization'] =
-    'Basic dXN1YXJpby53czpRYmUxMzU3OQ=='
+  axios.defaults.headers.common['Authorization'] = process.env.ORACLE_PASSWORD
   axios.defaults.headers.post['Content-Type'] = 'application/json'
 
   const columns = [
@@ -79,13 +80,20 @@ async function postRN(end, start, loop = 1) {
 }
 
 async function getLogActividad() {
-  const ultimoRegistro = 4354386 // 4316800
-  const primerRegistro = 4316800 // 399
+  const ultimoRegistro = 4354386 // 4354386
+  const primerRegistro = 399 // 399
   const cantidadPorArchivo = 500
   let totalRegistros = 0
 
-  let archivoIndex = 4317
+  let archivoIndex = 0
   let loop = 1
+
+  const directorio = `./assets/logActividad`
+
+  // Asegurarse de que el directorio exista, si no, créalo
+  if (!fs.existsSync(directorio)) {
+    fs.mkdirSync(directorio, { recursive: true })
+  }
 
   for (
     let index = ultimoRegistro;

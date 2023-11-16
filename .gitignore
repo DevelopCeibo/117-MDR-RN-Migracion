@@ -1,4 +1,5 @@
 node_modules
 /assets
-/logs
 .env
+/logs/*
+!/logs/.gitkeep
